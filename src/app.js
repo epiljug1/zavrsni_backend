@@ -7,7 +7,6 @@ const Post = require("./models/Post");
 const MONGODB =
   "mongodb+srv://evelin:hesoyam@cluster0.x614q.mongodb.net/zavrsni?retryWrites=true&w=majority";
 
-var counter = 0;
 const server = new ApolloServer({
   typeDefs,
   resolvers,

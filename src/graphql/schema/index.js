@@ -12,6 +12,7 @@ const typeDefs = gql`
     signUpClient(createClientInput: CreateClientInput): Client
     signInClient(signinInput: SigninInput): Client
     createNewPost(newPostInput: NewPostInput): Post
+    deletePost(deletePost: DeletePostInput!): String
   }
 
   type Client {
@@ -24,6 +25,7 @@ const typeDefs = gql`
   }
 
   type Post {
+    id: ID
     content: String!
     author: Client!
     createdAt: String!
@@ -33,6 +35,10 @@ const typeDefs = gql`
   input NewPostInput {
     content: String
     author: String
+  }
+
+  input DeletePostInput {
+    id: String
   }
 
   input CreateClientInput {

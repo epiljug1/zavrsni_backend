@@ -2,6 +2,7 @@ const Client = require("../../models/Client");
 const { ApolloError } = require("apollo-server-errors");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+
 // svaki resolver (parent ->useful with resolver chains, args-> arguments for field, context -> auth, db conn, info) => {}
 
 const resolvers = {
@@ -36,13 +37,23 @@ const resolvers = {
       console.log("register user");
 
       //see if same user exist
-      const oldClient = await Client.findOne({ username });
+      const oldClient = await Client.findOne({
+        $or: [{ email: email }, { username: username }],
+      });
 
       //ako postoji baciti error
       if (oldClient) {
         console.log("error 42");
+        const sameUsername = oldClient.username === username;
+        const sameEmail = oldClient.email === email;
+        let message;
+
+        if (sameUsername && sameEmail) message = "username and email!";
+        else if (sameUsername) message = "username!";
+        else if (sameEmail) message = "email!";
+
         throw new ApolloError(
-          "There is already client with this data",
+          `There is already client with this ${message}`,
           "USER_EXISTS"
         );
       }
@@ -61,13 +72,12 @@ const resolvers = {
 
       //onda pravimo jwt
       const token = jwt.sign(
-        { user_id: newClient._id, email },
+        { user_id: newClient._id, email, username, name, surname },
         "somesecretstring",
         {
           expiresIn: "2h",
         }
       );
-      // console.log("token: " + token);
 
       newClient.token = token;
 
@@ -81,19 +91,18 @@ const resolvers = {
       };
     },
     signInClient: async (_, { signinInput: { username, password } }) => {
-      //prvo gledamo ima li usera
       console.log("---signinClient---");
       const checkClient = await Client.findOne({ username });
 
-      //ako nema bacamo error
+      //check if there is already user with this username
       if (!checkClient) {
         throw new ApolloError(
-          "There is no client with this data",
+          "There is no client with username: ",
           "USER_DOES_NOT_EXISTS"
         );
       }
 
-      //provjera passworda je li dobar
+      //checking is password correct
       const isEqualPassword = await bcrypt.compare(
         password,
         checkClient.password
@@ -105,10 +114,16 @@ const resolvers = {
 
       //pravimo novi token
       checkClient.token = jwt.sign(
-        { user_id: checkClient._id, email: checkClient.email },
+        {
+          user_id: checkClient._id,
+          email: checkClient.email,
+          username: checkClient.username,
+          name: checkClient.name,
+          surname: checkClient.surname,
+        },
         "somesecretstring",
         {
-          expiresIn: "2h",
+          expiresIn: "1h",
         }
       );
 
