@@ -6,6 +6,7 @@ const typeDefs = gql`
     posts: [Post!]
     getClientByUsername(username: String): Client
     getClientPosts(email: String!): [Post!]
+    getPostById(id: String): Post
   }
 
   type Mutation {
@@ -13,6 +14,7 @@ const typeDefs = gql`
     signInClient(signinInput: SigninInput): Client
     createNewPost(newPostInput: NewPostInput): Post
     deletePost(deletePost: DeletePostInput!): String
+    editPost(editPostInput: EditPostInput): Post
   }
 
   type Client {
@@ -27,9 +29,14 @@ const typeDefs = gql`
   type Post {
     id: ID
     content: String!
-    author: Client!
+    author: Client
     createdAt: String!
     updatedAt: String!
+  }
+
+  input EditPostInput {
+    content: String
+    id: String
   }
 
   input NewPostInput {
