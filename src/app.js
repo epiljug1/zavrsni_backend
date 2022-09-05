@@ -6,7 +6,7 @@ const cron = require("node-cron");
 const Client = require("./models/Client");
 const Post = require("./models/Post");
 const MONGODB =
-  "mongodb+srv://evelin:hesoyam@cluster0.x614q.mongodb.net/zavrsni?retryWrites=true&w=majority";
+  "mongodb+srv://evelin:hesoyam@cluster0.x614q.mongodb.net/zavrsniProdukcija?retryWrites=true&w=majority";
 
 const server = new ApolloServer({
   typeDefs,
@@ -35,7 +35,7 @@ mongoose
   .connect(MONGODB, { useNewUrlParser: true })
   .then(() => {
     console.log("MONGODB CONNECTED!");
-    return server.listen({ port: 4000 });
+    return server.listen({ port: process.env.PORT || 4000 });
   })
   .then((res) => {
     console.log("SERVER IS RUNNING AT " + res.url);
