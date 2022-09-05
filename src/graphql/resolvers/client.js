@@ -8,9 +8,10 @@ const jwt = require("jsonwebtoken");
 const resolvers = {
   Query: {
     clients: async (_, __, { client }) => {
-      console.log("CLIENTSSS");
-      // console.log(!!client);
-      // console.log(client);
+      if (!client) {
+        return null;
+      }
+
       const clients = await Client.find();
       const clinetsNew = clients.map((client) => ({
         id: client.id,
@@ -19,10 +20,7 @@ const resolvers = {
       return clinetsNew;
     },
     getClientByUsername: async (_, { username }, { field }) => {
-      console.log("field: " + field);
       const user = await Client.findOne({ username });
-      console.log("USER------\n" + user._id);
-
       return {
         id: user.id,
         ...user._doc,
@@ -34,8 +32,6 @@ const resolvers = {
       _,
       { createClientInput: { name, surname, username, email, password } }
     ) {
-      console.log("register user");
-
       //see if same user exist
       const oldClient = await Client.findOne({
         $or: [{ email: email }, { username: username }],
@@ -43,7 +39,6 @@ const resolvers = {
 
       //ako postoji baciti error
       if (oldClient) {
-        console.log("error 42");
         const sameUsername = oldClient.username === username;
         const sameEmail = oldClient.email === email;
         let message;
@@ -83,7 +78,6 @@ const resolvers = {
 
       //sejvamo usera u db
       const res = await newClient.save();
-      console.log("SUCCESFULLY CREATED A NEW USER");
 
       return {
         id: res.id,
@@ -91,7 +85,6 @@ const resolvers = {
       };
     },
     signInClient: async (_, { signinInput: { username, password } }) => {
-      console.log("---signinClient---");
       const checkClient = await Client.findOne({ username });
 
       //check if there is already user with this username
