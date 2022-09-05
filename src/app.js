@@ -11,8 +11,8 @@ const MONGODB =
 const server = new ApolloServer({
   typeDefs,
   resolvers,
-  // csrfPrevention: true,
-  // cache: 'bounded',
+  csrfPrevention: true,
+  cache: "bounded",
   context: async ({ req }) => {
     const tokenHeader = req.headers.authorization || ""; // e.g., "Bearer user-1"
 
