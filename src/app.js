@@ -31,6 +31,8 @@ cron.schedule("0 0 * * *", async () => {
   await Post.deleteMany({});
 });
 
+console.log("db: ", process.env.MONGO_DB);
+
 mongoose
   .connect(process.env.MONGO_DB || MONGODB, { useNewUrlParser: true })
   .then(() => {
