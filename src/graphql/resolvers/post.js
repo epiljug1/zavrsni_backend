@@ -6,7 +6,6 @@ const mongoose = require("mongoose");
 const resolvers = {
   Query: {
     posts: async (_, __, {}) => {
-      console.log("posts");
       const posts = await Post.find()
         .sort({ createdAt: -1 })
         .populate("author");
