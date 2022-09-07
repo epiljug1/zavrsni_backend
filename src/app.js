@@ -26,7 +26,7 @@ const server = new ApolloServer({
   },
 });
 
-cron.schedule("0 0 * * *", async () => {
+cron.schedule("10 0 * * *", async () => {
   //deleting all posts every day at 00:00
   await Post.deleteMany({});
 });
