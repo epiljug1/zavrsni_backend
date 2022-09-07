@@ -26,9 +26,15 @@ const server = new ApolloServer({
   },
 });
 
-cron.schedule("20 0 * * *", async () => {
+cron.schedule("31 0 * * *", async () => {
   //deleting all posts every day at 00:00
+  console.log("deleting all posts");
   await Post.deleteMany({});
+});
+
+cron.schedule("*/2 * * * *", () => {
+  //deleting all posts every day at 00:00
+  console.log("cron//");
 });
 
 console.log("db: ", process.env.MONGO_DB);
